@@ -13,8 +13,8 @@ type DoorbellConfigEntry = ConfigEntry
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
-    """Legacy YAML setup. Optional – can be minimal at first."""
-    # You can parse config[DOMAIN] here if you want YAML-based config.
+    """Legacy YAML setup (not really used if you rely on config flow)."""
+    # You could support configuration.yaml here if you want.
     return True
 
 
@@ -27,13 +27,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: DoorbellConfigEntry) -> 
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = hub
 
-    # Forward to platforms
+    # Forward to platforms (for now only event; later: lock, cover, select)
     await hass.config_entries.async_forward_entry_setups(
         entry,
-        ["event"],  # later: "lock", "cover", "select", etc.
+        ["event"],
     )
 
-    # Register services (e.g. doorbell.ring)
+    # Register services (e.g. doorbell.ring, doorbell.open_gate)
     hub.register_services()
 
     return True
