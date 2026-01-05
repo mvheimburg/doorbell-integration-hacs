@@ -134,6 +134,18 @@ class DoorbellHub:
             blocking=False,
         )
 
+    async def async_stop_gate(self) -> None:
+        """Stop the mapped real gate entity, if configured."""
+        if not self.config.gate_entity:
+            return
+
+        await self.hass.services.async_call(
+            "cover",
+            "stop_cover",
+            {"entity_id": self.config.gate_entity},
+            blocking=False,
+        )
+
     async def async_lock_for_remote(self, remote_entity_id: str) -> None:
         """
         Lock the real entity mapped to a given remote doorbell lock entity.
@@ -163,7 +175,8 @@ class DoorbellHub:
         )
 
     def register_services(self) -> None:
-        """Register HA services like doorbell.ring and doorbell.open_gate."""
+        """Register HA services like doorbell.ring and gate controls."""
+
         async def _handle_ring(call: ServiceCall) -> None:
             await self.async_ring()
 
@@ -172,6 +185,9 @@ class DoorbellHub:
 
         async def _handle_close_gate(call: ServiceCall) -> None:
             await self.async_close_gate()
+
+        async def _handle_stop_gate(call: ServiceCall) -> None:
+            await self.async_stop_gate()
 
         self.hass.services.async_register(
             DOMAIN,
@@ -187,4 +203,9 @@ class DoorbellHub:
             DOMAIN,
             "close_gate",
             _handle_close_gate,
+        )
+        self.hass.services.async_register(
+            DOMAIN,
+            "stop_gate",
+            _handle_stop_gate,
         )
