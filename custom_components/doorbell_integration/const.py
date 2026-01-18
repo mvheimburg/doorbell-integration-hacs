@@ -15,3 +15,6 @@ CONF_GATE_ENTITY = "gate_entity"
 
 # Dynamic mapping: { remote_lock_entity_id: real_lock_entity_id }
 CONF_LOCK_MAP = "lock_map"
+
+
+DOORBELL_RING_EVENT = "doorbell_ring"
